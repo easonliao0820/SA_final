@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}編輯桌遊 — {{ game.boardGameName }}{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{{ url_for('admin.dashboard') }}" class="text-decoration-none text-muted">管理後台</a>
+                </li>
+                <li class="breadcrumb-item active fw-semibold" style="color:var(--primary)">
+                    編輯「{{ game.boardGameName }}」
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+
+                <h5 class="fw-bold mb-4" style="color:var(--primary)">
+                    <i class="fas fa-pen-to-square me-2" style="color:var(--accent)"></i>編輯桌遊資料
+                </h5>
+
+                <form method="POST" action="{{ url_for('admin.edit_game', game_id=game.boardGameId) }}" enctype="multipart/form-data">
+
+                    <!-- 名稱 -->
+                    <div class="mb-3">
+                        <label class="form-label" for="name">
+                            桌遊名稱 <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name"
+                               value="{{ game.boardGameName }}" required>
+                    </div>
+
+                    <!-- 年齡 / 人數 / 時長 -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="age">適合年齡</label>
+                            <input type="text" class="form-control" id="age" name="age"
+                                   value="{{ game.boardGameAge or '' }}" placeholder="例：10+">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="people">遊戲人數</label>
+                            <input type="text" class="form-control" id="people" name="people"
+                                   value="{{ game.boardGamePeople or '' }}" placeholder="例：2-4人">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="time">遊戲時長</label>
+                            <input type="text" class="form-control" id="time" name="time"
+                                   value="{{ game.boardGameTime or '' }}" placeholder="例：60-90分鐘">
+                        </div>
+                    </div>
+
+                    <!-- 圖片上傳 -->
+                    <div class="mb-3">
+                        <label class="form-label" for="img">封面圖片</label>
+                        {% if game.boardGameImageUrl %}
+                        <div class="mb-2" id="img-preview-wrap" style="display:block">
+                            <img id="img-preview"
+                                 src="{{ url_for('static', filename=game.boardGameImageUrl) }}"
+                                 alt="目前圖片" class="rounded-2 shadow-sm"
+                                 style="max-height:150px; max-width:100%">
+                        </div>
+                        {% else %}
+                        <div class="mb-2" id="img-preview-wrap" style="display:none">
+                            <img id="img-preview" src="" alt="預覽"
+                                 class="rounded-2 shadow-sm" style="max-height:150px; max-width:100%">
+                        </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="img" name="img"
+                               accept=".jpg,.jpeg,.png,.gif,.webp"
+                               onchange="updatePreview(this)">
+                        <small class="text-muted">不選擇檔案則保留目前圖片</small>
+                    </div>
+
+                    <!-- Tags -->
+                    {% set current_tag_ids = game.boardGameTag | map(attribute='tagId') | list %}
+                    <div class="mb-4">
+                        <label class="form-label">遊戲分類</label>
+                        <div class="tag-checkbox-group">
+                            {% for tag in tags %}
+                            {% set is_checked = tag.tagId in current_tag_ids %}
+                            <label class="tag-checkbox-label {{ 'checked' if is_checked }}">
+                                <input type="checkbox" name="tags" value="{{ tag.tagId }}"
+                                       {{ 'checked' if is_checked }}
+                                       onchange="updateTagStyle(this)">
+                                {{ tag.tagName }}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>取消
+                        </a>
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-floppy-disk me-2"></i>儲存變更
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updatePreview(input) {
+    const wrap = document.getElementById('img-preview-wrap');
+    const img  = document.getElementById('img-preview');
+    const file = input.files[0];
+    if (file) {
+        img.src = URL.createObjectURL(file);
+        wrap.style.display = 'block';
+    }
+}
+
+function updateTagStyle(checkbox) {
+    const label = checkbox.closest('.tag-checkbox-label');
+    label.classList.toggle('checked', checkbox.checked);
+}
+</script>
+{% endblock %}

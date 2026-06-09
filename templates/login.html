@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}管理員登入 — 桌遊管理系統{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+
+        <div class="login-icon">
+            <i class="fas fa-dice-d6"></i>
+        </div>
+
+        <h4 class="text-center fw-bold mb-1" style="color:var(--primary)">管理員登入</h4>
+        <p class="text-center text-muted small mb-4">請輸入您的帳號與密碼</p>
+
+        <form method="POST" action="{{ url_for('admin.login') }}">
+            <div class="mb-3">
+                <label class="form-label" for="account">
+                    <i class="fas fa-user me-1" style="color:var(--accent)"></i>帳號
+                </label>
+                <input type="text" class="form-control" id="account" name="account"
+                       placeholder="請輸入帳號" required autofocus>
+            </div>
+            <div class="mb-4">
+                <label class="form-label" for="password">
+                    <i class="fas fa-lock me-1" style="color:var(--accent)"></i>密碼
+                </label>
+                <input type="password" class="form-control" id="password" name="password"
+                       placeholder="請輸入密碼" required>
+            </div>
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-right-to-bracket me-2"></i>登入
+            </button>
+        </form>
+
+        <hr class="my-4">
+        <p class="text-center text-muted small mb-0">
+            <i class="fas fa-circle-info me-1"></i>
+            預設帳號：<code>admin</code> &nbsp;/&nbsp; 密碼：<code>admin123</code>
+        </p>
+
+        <div class="text-center mt-3">
+            <a href="{{ url_for('public.index') }}" class="text-muted small text-decoration-none">
+                <i class="fas fa-arrow-left me-1"></i>返回首頁
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block title %}管理後台 — 桌遊管理系統{% endblock %}
+
+{% block content %}
+
+<!-- Page header -->
+<div class="page-header">
+    <div class="container d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="mb-0 fw-bold" style="color:var(--primary)">
+                <i class="fas fa-table-list me-2" style="color:var(--accent)"></i>桌遊管理後台
+            </h4>
+            <small class="text-muted">歡迎，{{ session.get('user_name') }}！</small>
+        </div>
+        <a href="{{ url_for('admin.add_game') }}" class="btn btn-primary-custom">
+            <i class="fas fa-plus me-2"></i>新增桌遊
+        </a>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- Search & filter bar -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body">
+            <form action="{{ url_for('admin.dashboard') }}" method="GET" class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small fw-semibold text-muted mb-1">搜尋名稱</label>
+                    <input type="text" class="form-control" name="name"
+                           value="{{ name }}" placeholder="輸入桌遊名稱…">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-semibold text-muted mb-1">篩選分類</label>
+                    <select class="form-select" name="tag_id">
+                        <option value="">全部分類</option>
+                        {% for tag in tags %}
+                        <option value="{{ tag.tagId }}" {{ 'selected' if tag_id == tag.tagId }}>
+                            {{ tag.tagName }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-custom flex-fill">
+                        <i class="fas fa-search me-1"></i>搜尋
+                    </button>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary flex-fill">
+                        重設
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Result count -->
+    <p class="text-muted small mb-2">
+        共 <strong>{{ games|length }}</strong> 筆結果
+    </p>
+
+    <!-- Table -->
+    {% if games %}
+    <div class="admin-table table-responsive">
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th width="60">圖片</th>
+                    <th>名稱</th>
+                    <th>適合年齡</th>
+                    <th>人數</th>
+                    <th>遊戲時長</th>
+                    <th>分類</th>
+                    <th width="140" class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>
+                        {% if game.boardGameImageUrl %}
+                        <img src="{{ game.boardGameImageUrl if game.boardGameImageUrl.startswith('http') else url_for('static', filename=game.boardGameImageUrl) }}"
+                             class="game-thumb" alt="{{ game.boardGameName }}"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="game-thumb-placeholder" style="display:none">
+                            <i class="fas fa-dice-d6"></i>
+                        </div>
+                        {% else %}
+                        <div class="game-thumb-placeholder">
+                            <i class="fas fa-dice-d6"></i>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td class="fw-semibold">{{ game.boardGameName }}</td>
+                    <td>{{ game.boardGameAge or '—' }}</td>
+                    <td>{{ game.boardGamePeople or '—' }}</td>
+                    <td>{{ game.boardGameTime or '—' }}</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for tag in game.boardGameTag %}
+                            <span class="tag-badge">{{ tag.tagName }}</span>
+                            {% else %}
+                            <span class="text-muted small">無</span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ url_for('admin.edit_game', game_id=game.boardGameId) }}"
+                           class="btn btn-sm btn-warning me-1" title="編輯">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <button type="button" class="btn btn-sm btn-danger" title="刪除"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                data-game-id="{{ game.boardGameId }}"
+                                data-game-name="{{ game.boardGameName }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+    <div class="empty-state bg-white rounded-3 shadow-sm">
+        <i class="fas fa-box-open d-block"></i>
+        <h5>目前沒有桌遊資料</h5>
+        <p class="text-muted">點擊右上角「新增桌遊」開始建立資料</p>
+        <a href="{{ url_for('admin.add_game') }}" class="btn btn-primary-custom">
+            <i class="fas fa-plus me-2"></i>新增桌遊
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- Delete confirm modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-3 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-danger">
+                    <i class="fas fa-triangle-exclamation me-2"></i>確認刪除
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">確定要刪除「<strong id="modal-game-name"></strong>」嗎？此操作無法復原。</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                <form id="delete-form" method="POST" action="">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>確認刪除
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('deleteModal').addEventListener('show.bs.modal', function (e) {
+    const btn = e.relatedTarget;
+    const gameId = btn.dataset.gameId;
+    const gameName = btn.dataset.gameName;
+    document.getElementById('modal-game-name').textContent = gameName;
+    document.getElementById('delete-form').action = `/admin/games/${gameId}/delete`;
+});
+</script>
+{% endblock %}
