@@ -34,8 +34,8 @@ def login_required(f):
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'user_id' in session:
-        return redirect(url_for('admin.dashboard'))
+    # if 'user_id' in session:
+    #     return redirect(url_for('admin.dashboard'))
 
     if request.method == 'POST':
         acc = request.form.get('account', '').strip()
@@ -159,7 +159,7 @@ def edit_game(game_id):
         # checkupdate — 一次涵蓋存在性、格式、重複名稱
         result = Check.checkupdate(game_id, name, age, people, time, img_name, tag)
         if result != 'ok':
-            flash(result, 'danger')
+            flash('輸入資料有錯誤請檢查', 'danger')
             return render_template('admin/edit_game.html', game=game, tags=tags)
 
         # 有上傳新圖片才取代，否則保留原路徑
