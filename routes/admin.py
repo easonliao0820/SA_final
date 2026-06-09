@@ -71,6 +71,11 @@ def logout():
 @admin_bp.route('/admin')
 @login_required
 def dashboard():
+    if not Check.checkConnectDb():
+        flash('資料庫連線失敗，請稍後再試', 'danger')
+        return render_template('admin/dashboard.html', games=[], tags=[],
+                               name='', tag_id=None)
+
     tags   = BoardGameTag.getAllTag()
     name   = request.args.get('name', '').strip()
     tag_id = request.args.get('tag_id', type=int)
