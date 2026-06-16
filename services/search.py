@@ -16,17 +16,5 @@ class Search:
         return query.all()
 
     @staticmethod
-    def searchByTag(tagId: int) -> list[BoardGame]:
-        return BoardGame.query.filter(
-            BoardGame.boardGameTag.any(BoardGameTag.tagId == tagId)
-        ).all()
-
-    @staticmethod
-    def searchByName(name: str) -> list[BoardGame]:
-        return BoardGame.query.filter(
-            BoardGame.boardGameName.contains(name)
-        ).all()
-
-    @staticmethod
     def getAllGames() -> list[BoardGame]:
         return BoardGame.query.all()

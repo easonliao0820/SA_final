@@ -13,14 +13,23 @@
         <p class="lead mb-4">搜尋並發現最適合你的桌遊體驗</p>
         <form action="{{ url_for('public.index') }}" method="GET">
             <div class="row justify-content-center">
-                <div class="col-md-7 col-lg-5">
-                    <div class="input-group input-group-lg">
-                        <input type="text" class="form-control search-input" name="name"
-                               value="{{ name }}" placeholder="輸入桌遊名稱搜尋…">
-                        {% if tag_id %}<input type="hidden" name="tag_id" value="{{ tag_id }}">{% endif %}
-                        <button class="btn btn-accent" type="submit">
-                            <i class="fas fa-search"></i>
-                        </button>
+                <div class="col-md-9 col-lg-7">
+                    <div class="d-flex gap-2 pd-2">
+                        <select class="search-select" name="tag_id">
+                            <option value="">全部分類</option>
+                            {% for tag in tags %}
+                            <option value="{{ tag.tagId }}" {{ 'selected' if tag_id == tag.tagId }}>
+                                {{ tag.tagName }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control search-input" name="name"
+                                   value="{{ name }}" placeholder="輸入桌遊名稱搜尋…">
+                            <button class="btn btn-accent" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -30,20 +39,6 @@
 
 <!-- Content -->
 <div class="container py-4">
-
-    <!-- Tag filters -->
-    <div class="d-flex flex-wrap gap-2 mb-4">
-        <a href="{{ url_for('public.index', name=name) }}"
-           class="btn btn-sm {{ 'btn-primary-custom' if not tag_id else 'btn-outline-secondary' }}">
-            <i class="fas fa-border-all me-1"></i>全部
-        </a>
-        {% for tag in tags %}
-        <a href="{{ url_for('public.index', tag_id=tag.tagId, name=name) }}"
-           class="btn btn-sm {{ 'btn-primary-custom' if tag_id == tag.tagId else 'btn-outline-secondary' }}">
-            {{ tag.tagName }}
-        </a>
-        {% endfor %}
-    </div>
 
     <!-- Result count -->
     <p class="text-muted small mb-3">
