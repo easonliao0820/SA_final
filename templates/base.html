@@ -32,7 +32,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('admin.logout') }}">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">
                         <i class="fas fa-right-from-bracket me-1"></i>登出
                         <span class="badge bg-secondary ms-1">{{ session.get('user_name') }}</span>
                     </a>
@@ -62,6 +62,32 @@
 </div>
 {% endif %}
 {% endwith %}
+
+{% if session.get('user_id') %}
+<div class="modal fade" id="logoutModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-right-from-bracket me-2" style="color:var(--accent)"></i>確認登出
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                確定要登出嗎？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-xmark me-1"></i>否
+                </button>
+                <a href="{{ url_for('admin.logout') }}" class="btn btn-primary-custom">
+                    <i class="fas fa-check me-1"></i>是
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% block content %}{% endblock %}
 

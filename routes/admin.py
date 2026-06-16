@@ -56,11 +56,6 @@ def login():
 
 @admin_bp.route('/logout')
 def logout():
-    try:
-        Check.checkLogout()   # 確認有 session 才執行登出
-    except ValueError as e:
-        flash(str(e), 'warning')
-        return redirect(url_for('public.index'))
     Account.logout()
     flash('已成功登出系統', 'info')
     return redirect(url_for('public.index'))

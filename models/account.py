@@ -16,10 +16,6 @@ class Account(db.Model):
 
     def getUserName(self) -> str:
         return self.userName
-
-    def checkLogin(self) -> bool:
-        return session.get('user_id') == self.userId
-
     # ── 認證 ──────────────────────────────────────────────────────────────────
 
     @staticmethod

@@ -23,21 +23,7 @@ class Check:
             return 'ok'
         return '帳號或密碼錯誤'
 
-    @staticmethod
-    def checkLogout() -> None:
-        """確認目前有登入 session 才允許登出，否則拋出例外"""
-        from flask import session
-        if 'user_id' not in session:
-            raise ValueError('目前無登入狀態')
-
     # ── 新增桌遊三段驗證（對應序列圖）────────────────────────────────────────
-
-    @staticmethod
-    def checkAddButton(name: str, age: str, people: str,
-                      time: str, img: str, tag: list) -> str:
-        """第一關：使用者按下新增按鈕並於彈出視窗確認"""
-        return 'ok'
-
     @staticmethod
     def checkAddInput(name: str, age: str, people: str,
                       time: str, img: str, tag: list) -> str:
