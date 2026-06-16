@@ -107,13 +107,13 @@ def add_game():
         img_file = request.files.get('img')
         img_name = img_file.filename if img_file else ''
 
-        # 第一關：checkAddButton — 表面必填檢查
+        # 第一關：checkAddButton — 確認新增
         result = Check.checkAddButton(name, age, people, time, img_name, tag)
         if result != 'ok':
             flash(result, 'danger')
             return render_template('admin/add_game.html', tags=tags)
 
-        # 第二關：checkAddInput — 格式驗證
+        # 第二關：checkAddInput — 欄位格式驗證
         result = Check.checkAddInput(name, age, people, time, img_name, tag)
         if result != 'ok':
             flash(result, 'danger')

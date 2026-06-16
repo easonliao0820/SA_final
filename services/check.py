@@ -34,20 +34,8 @@ class Check:
 
     @staticmethod
     def checkAddButton(name: str, age: str, people: str,
-                       time: str, img: str, tag: list) -> str:
-        """第一關：按下新增按鈕時的表面必填檢查"""
-        if not name or not name.strip():
-            return '桌遊名稱為必填欄位'
-        if img and not _valid_img(img):
-            return '僅支援 jpg、jpeg、png、gif、webp 格式'
-        if age and len(age) > 50:
-            return '適合年齡欄位過長'
-        if people and len(people) > 50:
-            return '遊戲人數欄位過長'
-        if time and len(time) > 50:
-            return '遊戲時長欄位過長'
-        if tag and not isinstance(tag, list):
-            return '分類格式錯誤'
+                      time: str, img: str, tag: list) -> str:
+        """第一關：使用者按下新增按鈕並於彈出視窗確認"""
         return 'ok'
 
     @staticmethod
@@ -70,23 +58,13 @@ class Check:
 
     @staticmethod
     def checkAddDB(name: str, age: str, people: str,
-                   time: str, img: str, tag: list) -> str:
+                      time: str, img: str, tag: list) -> str:
         """第三關：確認資料庫中無完全相同的桌遊（名稱 + 人數組合）"""
         from models.board_game import BoardGame
         existing = BoardGame.query.filter_by(boardGameName=name.strip()).first()
         if existing:
             detail = f'（人數：{existing.boardGamePeople}）' if existing.boardGamePeople else ''
             return f'已存在名稱為「{name}」的桌遊{detail}'
-        # 同人數、同時長的高度相似局也提示（img / tag 不做 DB 比對）
-        _ = (img, tag)
-        if age and people and time:
-            similar = BoardGame.query.filter_by(
-                boardGameAge=age.strip(),
-                boardGamePeople=people.strip(),
-                boardGameTime=time.strip()
-            ).first()
-            if similar:
-                return f'已有高度相似的桌遊「{similar.boardGameName}」，請確認是否重複新增'
         return 'ok'
 
     # ── 刪除 / 搜尋 / 更新驗證 ───────────────────────────────────────────────

@@ -86,12 +86,38 @@
                         <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-1"></i>取消
                         </a>
-                        <button type="submit" class="btn btn-primary-custom">
+                        <button type="button" class="btn btn-primary-custom"
+                                data-bs-toggle="modal" data-bs-target="#confirmModal">
                             <i class="fas fa-floppy-disk me-2"></i>儲存桌遊
                         </button>
                     </div>
 
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 確認新增 Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="fas fa-plus-circle me-2" style="color:var(--accent)"></i>確認新增
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                確定要新增這筆桌遊資料嗎？
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-xmark me-1"></i>否
+                </a>
+                <button type="button" class="btn btn-primary-custom" id="confirmSave">
+                    <i class="fas fa-check me-1"></i>是
+                </button>
             </div>
         </div>
     </div>
@@ -117,5 +143,9 @@ function updateTagStyle(checkbox) {
     const label = checkbox.closest('.tag-checkbox-label');
     label.classList.toggle('checked', checkbox.checked);
 }
+
+document.getElementById('confirmSave').addEventListener('click', function () {
+    document.querySelector('form').submit();
+});
 </script>
 {% endblock %}
