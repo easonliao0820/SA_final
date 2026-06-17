@@ -23,11 +23,23 @@ class Check:
             return 'ok'
         return '帳號或密碼錯誤'
 
-    # ── 新增桌遊三段驗證（對應序列圖）────────────────────────────────────────
+    # ── 新增桌遊兩段驗證（對應序列圖）────────────────────────────────────────
     @staticmethod
     def checkAddInput(name: str, age: str, people: str,
                       time: str, img: str, tag: list) -> str:
-        """第二關：確認送出後的完整格式驗證"""
+        """第一關：確認送出後的完整格式驗證"""
+        if not name or not name.strip():
+            return '桌遊名稱為必填欄位'
+        if img and not _valid_img(img):
+            return '僅支援 jpg、jpeg、png、gif、webp 格式'
+        if age and len(age) > 50:
+            return '適合年齡欄位過長'
+        if people and len(people) > 50:
+            return '遊戲人數欄位過長'
+        if time and len(time) > 50:
+            return '遊戲時長欄位過長'
+        if tag and not isinstance(tag, list):
+            return '分類格式錯誤'
         if len(name.strip()) > 200:
             return '桌遊名稱不可超過 200 字'
         if age and not any(c.isdigit() for c in age):
@@ -38,14 +50,14 @@ class Check:
             return '遊戲時長格式有誤'
         if img and not _valid_img(img):
             return '僅支援 jpg、jpeg、png、gif、webp 格式'
-        if tag and len(tag) > 10:
-            return '分類數量過多，最多 10 個'
+        if tag and len(tag) > 2:
+            return '分類數量過多，最多 2 個'
         return 'ok'
 
     @staticmethod
     def checkAddDB(name: str, age: str, people: str,
                       time: str, img: str, tag: list) -> str:
-        """第三關：確認資料庫中無完全相同的桌遊（名稱 + 人數組合）"""
+        """第二關：確認資料庫中無完全相同的桌遊（名稱 + 人數組合）"""
         from models.board_game import BoardGame
         existing = BoardGame.query.filter_by(boardGameName=name.strip()).first()
         if existing:

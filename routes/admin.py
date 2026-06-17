@@ -79,7 +79,7 @@ def dashboard():
                            name=name, tag_id=tag_id)
 
 
-# ── 新增桌遊（三段驗證對應序列圖）────────────────────────────────────────────
+# ── 新增桌遊（兩段驗證對應序列圖）────────────────────────────────────────────
 
 @admin_bp.route('/admin/games/add', methods=['GET', 'POST'])
 @login_required
@@ -95,19 +95,13 @@ def add_game():
         img_file = request.files.get('img')
         img_name = img_file.filename if img_file else ''
 
-        # 第一關：checkAddButton — 確認新增
-        result = Check.checkAddButton(name, age, people, time, img_name, tag)
-        if result != 'ok':
-            flash(result, 'danger')
-            return render_template('admin/add_game.html', tags=tags)
-
-        # 第二關：checkAddInput — 欄位格式驗證
+        # 第一關：checkAddInput — 欄位格式驗證
         result = Check.checkAddInput(name, age, people, time, img_name, tag)
         if result != 'ok':
             flash(result, 'danger')
             return render_template('admin/add_game.html', tags=tags)
 
-        # 第三關：checkAddDB — 資料庫重複確認
+        # 第二關：checkAddDB — 資料庫重複確認
         result = Check.checkAddDB(name, age, people, time, img_name, tag)
         if result != 'ok':
             flash(result, 'warning')
