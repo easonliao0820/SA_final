@@ -53,7 +53,7 @@ class Check:
             return f'已存在名稱為「{name}」的桌遊{detail}'
         return 'ok'
 
-    # ── 刪除 / 搜尋 / 更新驗證 ───────────────────────────────────────────────
+    # ── 刪除 / 更新驗證 ───────────────────────────────────────────────────────
 
     @staticmethod
     def checkDelete(id: int) -> str:
@@ -62,15 +62,6 @@ class Check:
         game = BoardGame.getGameDetails(id)
         if not game:
             return f'找不到 ID 為 {id} 的桌遊'
-        return 'ok'
-
-    @staticmethod
-    def checkSearch(tagId: int, name: str) -> str:
-        """驗證搜尋參數合法性"""
-        if tagId is not None and tagId < 0:
-            return '分類 ID 不合法'
-        if name and len(name) > 200:
-            return '搜尋名稱過長'
         return 'ok'
 
     @staticmethod

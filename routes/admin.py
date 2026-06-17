@@ -74,14 +74,7 @@ def dashboard():
     tags   = BoardGameTag.getAllTag()
     name   = request.args.get('name', '').strip()
     tag_id = request.args.get('tag_id', type=int)
-
-    # Check 驗證搜尋參數
-    check_result = Check.checkSearch(tag_id, name)
-    if check_result != 'ok':
-        flash(check_result, 'danger')
-        name, tag_id = '', None
-
-    games = Search.searchBoardGames(tag_id, name)
+    games  = Search.searchBoardGames(tag_id, name)
     return render_template('admin/dashboard.html', games=games, tags=tags,
                            name=name, tag_id=tag_id)
 
